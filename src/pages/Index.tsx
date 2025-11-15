@@ -1,8 +1,39 @@
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import Icon from "@/components/ui/icon";
+import { useEffect, useState } from "react";
 
 const Index = () => {
+  const [hasPlayed, setHasPlayed] = useState(false);
+
+  useEffect(() => {
+    const playWelcomeMessage = () => {
+      if (hasPlayed) return;
+      
+      const utterance = new SpeechSynthesisUtterance(
+        "Добро пожаловать! Создайте свою уникальную песню с помощью искусственного интеллекта. Нажмите на кнопку и начните творить прямо сейчас!"
+      );
+      utterance.lang = 'ru-RU';
+      utterance.rate = 1.0;
+      utterance.pitch = 1.0;
+      utterance.volume = 0.8;
+      
+      const playAudio = () => {
+        window.speechSynthesis.speak(utterance);
+        setHasPlayed(true);
+        document.removeEventListener('click', playAudio);
+        document.removeEventListener('touchstart', playAudio);
+        document.removeEventListener('keydown', playAudio);
+      };
+
+      document.addEventListener('click', playAudio, { once: true });
+      document.addEventListener('touchstart', playAudio, { once: true });
+      document.addEventListener('keydown', playAudio, { once: true });
+    };
+
+    playWelcomeMessage();
+  }, [hasPlayed]);
+
   return (
     <div className="min-h-screen bg-gradient-to-b from-background via-background to-[#1a0f2e]">
       <div className="container mx-auto px-4 py-8">
